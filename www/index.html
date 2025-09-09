@@ -4,14 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <title>TP Serveur</title>
+    <script type="text/javascript" src="js/echo.js"></script>
 </head>
 <body>
   <header>
    <h1>Bienvenue sur mon serveur </h1>
     </header>
-     <section>
-       <p>Ceci est une section de contenu pour le TP CIEL.</p>
-        </section>
+  <section>
+
+ <div>
+          <label>Message à envoyer : </label>
+          <input type="text" id="messageEnvoi">
+          <input type="button" id="Envoyer" value="Envoyer">
+      </div>
+      <div>
+          <label>Message reçu : </label>
+          <input type="text" id="messageRecu" readonly>
+      </div>
+      <p>Ceci est une section de contenu pour le TP CIEL.</p>
+  </section>
         <footer>
         
     </footer>

@@ -10,7 +10,6 @@ var express = require('express');
 var exp = express();
 
 // Définition du port (variable configurable)
-var port = 80;
 
 //  Paramétrer le répertoire racine du site avec la méthode use : 
 exp.use(express.static(__dirname + '/www'));
@@ -28,6 +27,48 @@ exp.use(function (err, req, res, next) {
 });
 
 // Mettre le serveur web en écoute sur le port 80 : 
-exp.listen(port, function () {
-    console.log('Serveur en ecoute  ' + port);
+
+
+/*  *************** serveur WebSocket express *********************   */
+// 
+var expressWs = require('express-ws')(exp);
+
+// Connexion des clients à la WebSocket /echo et evenements associés 
+exp.ws('/echo', function (ws, req) {
+
+    console.log('Connection WebSocket %s sur le port %s',
+        req.connection.remoteAddress, req.connection.remotePort);
+
+    ws.on('message', function (message) {
+        console.log('De %s %s, message :%s', req.connection.remoteAddress,
+            req.connection.remotePort, message);
+        ws.send(message);
+    });
+
+    ws.on('close', function (reasonCode, description) {
+        console.log('Deconnexion WebSocket %s sur le port %s',
+            req.connection.remoteAddress, req.connection.remotePort);
+    });
+
+}); 
+/*  *************** serveur WebSocket express *********************   */
+// 
+var expressWs = require('express-ws')(exp);
+
+// Connexion des clients à la WebSocket /echo et evenements associés 
+exp.ws('/echo', function (ws, req) {
+    console.log('Connection WebSocket %s sur le port %s', req.connection.remoteAddress, req.connection.remotePort);
+
+    ws.on('message', function (message) {
+        console.log('De %s %s, message :%s', req.connection.remoteAddress, req.connection.remotePort, message);
+        ws.send(message); // Echo du message
+    });
+
+    ws.on('close', function () {
+        console.log('Deconnexion WebSocket %s sur le port %s', req.connection.remoteAddress, req.connection.remotePort);
+    });
+});
+var portServ = 80;
+exp.listen(portServ, function () {
+    console.log('Serveur en ecoute');
 });
