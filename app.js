@@ -79,29 +79,51 @@ var question = '?';
 var bonneReponse = 0;
 // Connexion des clients a la WebSocket /qr et evenements associés
 // Questions/reponses
+
+
 exp.ws('/qr', function (ws, req) {
     console.log('Connection WebSocket %s sur le port %s',
         req.connection.remoteAddress, req.connection.remotePort);
-    NouvelleQuestion();
-    ws.on('message', TraiterReponse);
-    ws.on('close', function (reasonCode, description) {
+
+    NouvelleQuestion(ws);
+
+    ws.on('message', function (message) {
+        console.log('De %s %s, message :%s', req.connection.remoteAddress,
+            req.connection.remotePort, message);
+
+        let reponse = parseInt(message);
+        let messageClient = '';
+
+        if (reponse === bonneReponse) {
+            messageClient = 'Bonne réponse !';
+        } else {
+            messageClient = 'Mauvaise réponse !';
+        }
+
+        // Envoyer uniquement au client qui a répondu
+        ws.send(messageClient);
+
+        // Attendre 3 secondes avant d'envoyer une nouvelle question
+        setTimeout(() => {
+            NouvelleQuestion(ws);
+        }, 3000);
+    });
+
+    ws.on('close', function () {
         console.log('Deconnexion WebSocket %s sur le port %s',
             req.connection.remoteAddress, req.connection.remotePort);
     });
-    function TraiterReponse(message) {
-        console.log('De %s %s, message :%s', req.connection.remoteAddress,
-            req.connection.remotePort, message);
-        if (message == bonneReponse) {
-            NouvelleQuestion();
-        }
-    }
-    function NouvelleQuestion() {
+
+    function NouvelleQuestion(wsClient) {
         var x = GetRandomInt(11);
         var y = GetRandomInt(11);
         question = x + '*' + y + ' = ?';
         bonneReponse = x * y;
-        aWss.broadcast(question);
+
+        // Envoyer la nouvelle question uniquement au client concerné
+        wsClient.send(question);
     }
+
     function GetRandomInt(max) {
         return Math.floor(Math.random() * Math.floor(max));
     }
