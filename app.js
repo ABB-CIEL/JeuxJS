@@ -128,3 +128,19 @@ exp.ws('/qr', function (ws, req) {
         return Math.floor(Math.random() * Math.floor(max));
     }
 });
+function NouvelleQuestionBinaire(wsClient) {
+    const entier = Math.floor(Math.random() * 256); // nombre entre 0 et 255
+    let binaire = '';
+
+    // Construction manuelle de la chaîne binaire sur 8 bits
+    for (let i = 7; i >= 0; i--) {
+        binaire += ((entier >> i) & 1);
+    }
+
+    question = `Convertir le nombre binaire ${binaire} en base 10`;
+    bonneReponse = entier;
+
+    wsClient.send(question);
+
+}
+
