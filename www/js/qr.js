@@ -38,4 +38,4 @@ function ControleIHM() {
 
 function BPEnvoyer() {
     ws.send(document.getElementById('messageEnvoi').value);
-} 
+}
